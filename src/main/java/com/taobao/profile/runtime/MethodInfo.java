@@ -24,13 +24,18 @@ public class MethodInfo {
      */
     private String mMethodName;
     /**
-     * 文件名
-     */
-    private String mFileName;
-    /**
      * 行号
      */
     private int mLineNum;
+    
+    public MethodInfo() {
+    }
+
+    public MethodInfo(String mClassName, String mMethodName) {
+        super();
+        this.mClassName = mClassName;
+        this.mMethodName = mMethodName;
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -65,20 +70,6 @@ public class MethodInfo {
      */
     public void setMMethodName(String methodName) {
         mMethodName = methodName;
-    }
-
-    /**
-     * @return
-     */
-    public String getMFileName() {
-        return mFileName;
-    }
-
-    /**
-     * @param fileName
-     */
-    public void setMFileName(String fileName) {
-        mFileName = fileName;
     }
 
     /**

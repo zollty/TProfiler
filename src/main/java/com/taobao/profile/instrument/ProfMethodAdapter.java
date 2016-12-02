@@ -38,8 +38,7 @@ public class ProfMethodAdapter extends MethodVisitor {
     public ProfMethodAdapter(MethodVisitor visitor, String fileName, String className,
             String methodName) {
         super(ASM5, visitor);
-        mMethodId = MethodCache.Request();
-        MethodCache.UpdateMethodName(mMethodId, fileName, className, methodName);
+        mMethodId = MethodCache.createMethodInfo(fileName, className, methodName);
         // 记录方法数
         Profiler.instrumentMethodCount.getAndIncrement();
     }

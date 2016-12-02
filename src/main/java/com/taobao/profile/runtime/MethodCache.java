@@ -7,7 +7,8 @@
  */
 package com.taobao.profile.runtime;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.taobao.profile.Manager;
 import com.taobao.profile.Profiler;
@@ -28,7 +29,7 @@ public class MethodCache {
     /**
      * 方法名缓存
      */
-    private static Vector<MethodInfo> mCacheMethods = new Vector<MethodInfo>(
+    private static List<MethodInfo> mCacheMethods = new ArrayList<MethodInfo>(
             INIT_CACHE_SIZE);
 
     /**
@@ -39,14 +40,17 @@ public class MethodCache {
 
     /**
      * 占位并生成方法ID
-     *
+     * 
+     * @param fileName
+     * @param className
+     * @param methodName
      * @return
      */
-    public synchronized static int Request() {
-        mCacheMethods.add(new MethodInfo());
+    public synchronized static int createMethodInfo(String fileName, String className, String methodName) {
+        mCacheMethods.add(new MethodInfo(className, methodName));
         return mCacheMethods.size() - 1;
     }
-
+    
     /**
      * 更新行号
      *
@@ -56,34 +60,19 @@ public class MethodCache {
     public synchronized static void UpdateLineNum(int id, int lineNum) {
         mCacheMethods.get(id).setMLineNum(lineNum);
     }
-
-    /**
-     * 更新类名方法名
-     *
-     * @param id
-     * @param fileName
-     * @param className
-     * @param methodName
-     */
-    public synchronized static void UpdateMethodName(int id, String fileName,
-            String className, String methodName) {
-        MethodInfo methodInfo = mCacheMethods.get(id);
-        methodInfo.setMFileName(fileName);
-        methodInfo.setMClassName(className);
-        methodInfo.setMMethodName(methodName);
-    }
-
+    
     /**
      * 写出方法信息
      */
-    public synchronized static void flushMethodData() {
+    public static void flushMethodData() {
         fileWriter.append("instrumentclass:");
         fileWriter.append(Profiler.instrumentClassCount.toString());
         fileWriter.append(" instrumentmethod:");
         fileWriter.append(Profiler.instrumentMethodCount.toString());
         fileWriter.append("\n");
 
-        Vector<MethodInfo> vector = mCacheMethods;
+        List<MethodInfo> vector = new ArrayList<MethodInfo>();
+        loadCacheMethods(vector);
         int size = vector.size();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
@@ -98,5 +87,9 @@ public class MethodCache {
             }
         }
         fileWriter.flushAppend();
+    }
+    
+    private synchronized static void loadCacheMethods(List<MethodInfo> target) {
+        target.addAll(mCacheMethods);
     }
 }
